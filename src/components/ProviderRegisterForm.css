@@ -1,4 +1,4 @@
-/* .provider-form {
+.provider-form {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -22,4 +22,4 @@
 
 .provider-form button:hover {
     background-color: #138496;
-} */
+}
