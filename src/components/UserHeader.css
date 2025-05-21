@@ -1,4 +1,4 @@
-/* .user-header {
+.user-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -21,4 +21,4 @@
 
 .user-nav a:hover {
     text-decoration: underline;
-} */
+}
