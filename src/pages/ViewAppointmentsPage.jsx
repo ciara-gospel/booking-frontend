@@ -1,91 +1,78 @@
-import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+// import React, { useEffect, useState } from "react";
+// import ProviderHeader from "../components/ProviderHeader";
+// import "./ViewAppointmentsPage.css";
 
-import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/LoginPage";
-import UserHomePage from "./pages/UserHomePage";
-import BookingPage from "./pages/BookingPage";
-import UserBookingListPage from "./pages/UserBookingListPage";
-import ProviderHomePage from "./pages/ProviderHomePage";
-import CreateSlotPage from "./pages/CreateSlotPage";
-import ProviderSlotListPage from "./pages/ProviderSlotListPage";
-import ViewAppointmentsPage from "./pages/ViewAppointmentsPage";
+// export default function ViewAppointmentsPage() {
+//   const [appointments, setAppointments] = useState([]);
+//   const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-function App() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [userType, setUserType] = useState(null); // 'user' or 'provider'
+//   useEffect(() => {
+//     fetch(`${API_BASE}/provider/appointments`, { credentials: "include" })
+//       .then((res) => res.json())
+//       .then((data) => setAppointments(data))
+//       .catch((err) => {
+//         console.error(err);
+//         alert("Failed to load appointments");
+//       });
+//   }, []);
 
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/login"
-          element={
-            <LoginPage
-              setAuthenticated={setAuthenticated}
-              setUserType={setUserType}
-            />
-          }
-        />
+//   const handleCancel = async (appointmentId) => {
+//     if (!window.confirm("Cancel this appointment?")) return;
 
-        {/* User Routes */}
-        <Route
-          path="/home"
-          element={userType === "user" ? <UserHomePage /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/booking"
-          element={userType === "user" ? <BookingPage /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/list"
-          element={
-            userType === "user" ? <UserBookingListPage /> : <Navigate to="/" />
-          }
-        />
+//     try {
+//       const res = await fetch(`${API_BASE}/appointments/${appointmentId}`, {
+//         method: "DELETE",
+//         credentials: "include",
+//       });
 
-        {/* Provider Routes */}
-        <Route
-          path="/provider/home"
-          element={
-            userType === "provider" ? <ProviderHomePage /> : <Navigate to="/" />
-          }
-        />
-        <Route
-          path="/createslot"
-          element={
-            userType === "provider" ? <CreateSlotPage /> : <Navigate to="/" />
-          }
-        />
-        <Route
-          path="/provider/list"
-          element={
-            userType === "provider" ? (
-              <ProviderSlotListPage />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route
-          path="/provider/appointments"
-          element={
-            userType === "provider" ? (
-              <ViewAppointmentsPage />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-      </Routes>
-    </Router>
-  );
-}
+//       if (!res.ok) throw new Error("Failed to cancel appointment");
 
-export default App;
+//       setAppointments(appointments.filter((a) => a.id !== appointmentId));
+//     } catch (err) {
+//       console.error(err);
+//       alert("Error cancelling appointment");
+//     }
+//   };
+
+//   return (
+//     <div className="view-appointments-page">
+//       <ProviderHeader />
+//       <h1>Client Appointments</h1>
+//       <table>
+//         <thead>
+//           <tr>
+//             <th>Client</th>
+//             <th>Service</th>
+//             <th>Start Time</th>
+//             <th>Duration</th>
+//             <th>Actions</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {appointments.length === 0 ? (
+//             <tr>
+//               <td colSpan="5">No appointments yet</td>
+//             </tr>
+//           ) : (
+//             appointments.map((appt) => (
+//               <tr key={appt.id}>
+//                 <td>{appt.user_name}</td>
+//                 <td>{appt.service_name}</td>
+//                 <td>{new Date(appt.start_time).toLocaleString()}</td>
+//                 <td>{appt.duration_minutes} mins</td>
+//                 <td>
+//                   <button
+//                     onClick={() => handleCancel(appt.id)}
+//                     className="cancel-btn"
+//                   >
+//                     Cancel
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))
+//           )}
+//         </tbody>
+//       </table>
+//     </div>
+//   );
+// }
