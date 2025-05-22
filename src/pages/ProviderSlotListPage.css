@@ -1,49 +1,48 @@
-/* .slot-list-page {
-    padding: 40px 20px;
+.slot-list-page {
+    padding: 40px;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
 }
 
 .slot-list-page h1 {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th,
-td {
-    padding: 12px;
-    border: 1px solid #ccc;
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
     text-align: center;
 }
 
 button {
+    padding: 8px 12px;
     margin: 0 5px;
-    padding: 6px 12px;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
-    background-color: #007bff;
-    color: white;
-    border-radius: 3px;
 }
 
 button:hover {
-    background-color: #0056b3;
+    opacity: 0.9;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 .delete-btn {
-    background-color: #dc3545;
+    background-color: #e74c3c;
+    color: #fff;
 }
 
 .delete-btn:hover {
-    background-color: #c82333;
+    background-color: #c0392b;
 }
 
-input[type="datetime-local"],
-input[type="number"] {
-    padding: 6px;
-    width: 180px;
-} */
+button:not(.delete-btn) {
+    background-color: #3498db;
+    color: #fff;
+}
+
+button:not(.delete-btn):hover {
+    background-color: #2980b9;
+}

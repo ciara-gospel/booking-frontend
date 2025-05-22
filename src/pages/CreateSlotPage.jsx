@@ -1,41 +1,14 @@
 import React, { useState } from "react";
 import ProviderHeader from "../components/ProviderHeader";
+import SlotForm from "../components/SlotForm";
 import "./CreateSlotPage.css";
 
 export default function CreateSlotPage() {
-  const [startTime, setStartTime] = useState("");
-  const [duration, setDuration] = useState("");
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const [createdSlots, setCreatedSlots] = useState([]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!startTime || !duration) {
-      alert("Please fill all fields");
-      return;
-    }
-
-    try {
-      const res = await fetch(`${API_BASE}/slots`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // si token/cookie utilisé
-        body: JSON.stringify({
-          start_time: startTime,
-          duration_minutes: parseInt(duration),
-        }),
-      });
-
-      if (!res.ok) throw new Error("Failed to save slot");
-      alert("Slot created successfully!");
-      setStartTime("");
-      setDuration("");
-    } catch (err) {
-      console.error(err);
-      alert("Error saving slot");
-    }
+  const handleSlotCreated = (newSlot) => {
+    alert("Slot created successfully!");
+    setCreatedSlots((prev) => [...prev, newSlot]);
   };
 
   return (
@@ -43,24 +16,21 @@ export default function CreateSlotPage() {
       <ProviderHeader />
       <main className="slot-form-container">
         <h1>Create a Time Slot</h1>
-        <form onSubmit={handleSubmit} className="slot-form">
-          <label>Start Time:</label>
-          <input
-            type="datetime-local"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-          />
+        <SlotForm onSlotCreated={handleSlotCreated} />
 
-          <label>Duration (minutes):</label>
-          <input
-            type="number"
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            min="1"
-          />
-
-          <button type="submit">Save</button>
-        </form>
+        {createdSlots.length > 0 && (
+          <div className="created-slots">
+            <h2>Slots Created:</h2>
+            <ul>
+              {createdSlots.map((slot) => (
+                <li key={slot.id}>
+                  {new Date(slot.start_time).toLocaleString()} -{" "}
+                  {slot.duration_minutes} mins
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </main>
     </div>
   );

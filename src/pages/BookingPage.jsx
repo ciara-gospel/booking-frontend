@@ -1,83 +1,79 @@
 import React, { useEffect, useState } from "react";
 import UserHeader from "../components/UserHeader";
+import BookingRow from "../components/BookingRow";
 import "./BookingPage.css";
 
 export default function BookingPage() {
-  const [providers, setProviders] = useState([]);
-  const [bookedSlots, setBookedSlots] = useState([]);
+  const [slots, setSlots] = useState([]);
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
+  // Charger les créneaux disponibles
   useEffect(() => {
-    fetch(`${API_BASE}/providers-with-slots`)
+    fetch(`${API_BASE}/available-slots`, {
+      credentials: "include",
+    })
       .then((res) => res.json())
-      .then((data) => setProviders(data))
+      .then((data) => setSlots(data))
       .catch((err) => {
         console.error(err);
-        alert("Failed to load providers");
+        alert("Failed to load slots");
       });
   }, []);
 
-  const handleBook = async (providerId, slotId) => {
-    if (bookedSlots.includes(slotId)) return;
+  // Réserver un créneau
+  const handleBook = async (slotId) => {
+    if (!window.confirm("Confirm this booking?")) return;
 
     try {
-      const res = await fetch(`${API_BASE}/bookings`, {
+      const res = await fetch(`${API_BASE}/appointments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          provider_id: providerId,
-          slot_id: slotId,
-        }),
+        credentials: "include",
+        body: JSON.stringify({ slot_id: slotId }),
       });
 
       if (!res.ok) throw new Error("Booking failed");
-      setBookedSlots([...bookedSlots, slotId]);
+
+      // Mise à jour du slot comme réservé
+      const updatedSlots = slots.map((slot) =>
+        slot.id === slotId ? { ...slot, is_booked: true } : slot
+      );
+      setSlots(updatedSlots);
+      alert("Booking successful!");
     } catch (err) {
       console.error(err);
-      alert("Error booking slot.");
+      alert("Failed to book appointment");
     }
   };
 
   return (
     <div className="booking-page">
       <UserHeader />
-      <h1>Available Providers & Time Slots</h1>
-
-      {providers.map((provider) => (
-        <div key={provider.id} className="provider-section">
-          <h2>
-            {provider.service_name} - {provider.first_name} {provider.last_name}
-          </h2>
-          <table>
-            <thead>
+      <main className="booking-container">
+        <h1>Book Your Appointment</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Service</th>
+              <th>Start Time</th>
+              <th>Duration</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {slots.length === 0 ? (
               <tr>
-                <th>Slot ID</th>
-                <th>Start Time</th>
-                <th>Duration (minutes)</th>
-                <th>Reserve</th>
+                <td colSpan="5">No available slots at the moment</td>
               </tr>
-            </thead>
-            <tbody>
-              {provider.slots.map((slot) => (
-                <tr key={slot.id}>
-                  <td>{slot.id}</td>
-                  <td>{slot.start_time}</td>
-                  <td>{slot.duration_minutes}</td>
-                  <td>
-                    {bookedSlots.includes(slot.id) ? (
-                      <span className="booked">✅ Booked</span>
-                    ) : (
-                      <button onClick={() => handleBook(provider.id, slot.id)}>
-                        Book
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ))}
+            ) : (
+              slots.map((slot) => (
+                <BookingRow key={slot.id} slot={slot} onBook={handleBook} />
+              ))
+            )}
+          </tbody>
+        </table>
+      </main>
     </div>
   );
 }

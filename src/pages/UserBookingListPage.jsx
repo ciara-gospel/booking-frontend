@@ -3,45 +3,55 @@ import UserHeader from "../components/UserHeader";
 import "./UserBookingListPage.css";
 
 export default function UserBookingListPage() {
-  const [bookings, setBookings] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
-    fetch(`${API_BASE}/my-bookings`, {
-      credentials: "include", // si token/cookie est utilisé
+    fetch(`${API_BASE}/my-appointments`, {
+      credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => setBookings(data))
+      .then((data) => setAppointments(data))
       .catch((err) => {
         console.error(err);
-        alert("Failed to load bookings");
+        alert("Failed to load your appointments");
       });
   }, []);
 
   return (
-    <div className="user-booking-list">
+    <div className="user-booking-list-page">
       <UserHeader />
-      <h1>Your Appointments</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Provider</th>
-            <th>Service</th>
-            <th>Date</th>
-            <th>Duration (min)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {bookings.map((booking) => (
-            <tr key={booking.id}>
-              <td>{booking.provider_name}</td>
-              <td>{booking.service_name}</td>
-              <td>{new Date(booking.start_time).toLocaleString()}</td>
-              <td>{booking.duration_minutes}</td>
+      <main className="appointment-list-container">
+        <h1>Your Appointments</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Service</th>
+              <th>Start Time</th>
+              <th>Duration</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {appointments.length === 0 ? (
+              <tr>
+                <td colSpan="5">You haven't booked any appointments yet.</td>
+              </tr>
+            ) : (
+              appointments.map((appt) => (
+                <tr key={appt.id}>
+                  <td>{appt.provider_name}</td>
+                  <td>{appt.service_name}</td>
+                  <td>{new Date(appt.start_time).toLocaleString()}</td>
+                  <td>{appt.duration_minutes} mins</td>
+                  <td>{appt.status || "Booked"}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </main>
     </div>
   );
 }
