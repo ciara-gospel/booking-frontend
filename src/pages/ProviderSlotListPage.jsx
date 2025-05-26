@@ -8,18 +8,24 @@ export default function ProviderSlotListPage() {
   const API_BASE = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
-    fetch(`${API_BASE}/slots/mine`, { credentials: "include" }) // <-- ✅ route correcte
-      .then((res) => res.json())
-      .then((data) => setSlots(data))
+    fetch(`${API_BASE}/api/slots/mine`, { credentials: "include" })
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.message || "Failed to fetch");
+        }
+        return res.json();
+      })
+      .then((data) => setSlots(data.slots))
       .catch((err) => {
         console.error(err);
-        alert("Failed to load slots");
+        alert(err.message);
       });
   }, []);
 
   const handleUpdate = async (slotId, editedSlot) => {
     try {
-      const res = await fetch(`${API_BASE}/slots/${slotId}`, {
+      const res = await fetch(`${API_BASE}/api/slots/${slotId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -40,7 +46,7 @@ export default function ProviderSlotListPage() {
     if (!window.confirm("Are you sure you want to delete this slot?")) return;
 
     try {
-      const res = await fetch(`${API_BASE}/slots/${slotId}`, {
+      const res = await fetch(`${API_BASE}/api/slots/${slotId}`, {
         method: "DELETE",
         credentials: "include",
       });

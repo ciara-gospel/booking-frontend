@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -18,21 +18,20 @@ import ViewAppointmentsPage from "./pages/ViewAppointmentsPage";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
-  const [userType, setUserType] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      return JSON.parse(storedUser).role || null;
-    }
-    return null;
-  });
+  const [userType, setUserType] = useState(null);
+  const [loading, setLoading] = useState(true); // 👈
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
+      const parsed = JSON.parse(storedUser);
       setAuthenticated(true);
-      setUserType(JSON.parse(storedUser).role);
+      setUserType(parsed.role);
     }
+    setLoading(false); // 👈 marque la fin de l'initialisation
   }, []);
+
+  if (loading) return <div>Loading...</div>; // 👈 Affiche un écran temporaire
 
   return (
     <Router>
@@ -78,7 +77,7 @@ function App() {
           }
         />
         <Route
-          path="/provider/list"
+          path="/provider/slots"
           element={
             userType === "provider" ? (
               <ProviderSlotListPage />

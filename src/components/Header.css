@@ -16,9 +16,9 @@
 .header-buttons button {
     margin-left: 10px;
     padding: 8px 16px;
-    background-color: #007bff;
+    background-color: #fff;
     border: none;
-    color: white;
+    color: #000;
     cursor: pointer;
 }
 

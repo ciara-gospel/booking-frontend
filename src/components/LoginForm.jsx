@@ -28,6 +28,7 @@ export default function LoginForm({ setAuthenticated, setUserType }) {
       if (!res.ok) throw new Error("Login failed");
 
       const data = await res.json();
+      console.log("Logged in user:", data.user);
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
