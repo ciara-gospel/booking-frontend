@@ -1,16 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./ProviderRegisterForm.css";
+import "./LoginForm.css";
 
-export default function ProviderRegisterForm() {
-  const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    password: "",
-    service_name: "",
-  });
-
+export default function LoginForm({ setAuthenticated, setUserType }) {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -18,41 +12,44 @@ export default function ProviderRegisterForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
+
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/register/provider`,
+        `${import.meta.env.VITE_BASE_URL}/api/auth/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify(formData),
         }
       );
 
-      if (!res.ok) throw new Error("Failed to register");
+      if (!res.ok) throw new Error("Login failed");
 
-      navigate("/login");
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      const role = data.user.role;
+      setAuthenticated(true);
+      setUserType(role);
+
+      if (role === "user") {
+        navigate("/home/user");
+      } else if (role === "provider") {
+        navigate("/home/provider");
+      } else {
+        setErrorMessage("unknow user role.");
+      }
     } catch (err) {
       console.error(err);
-      alert("Registration failed.");
+      setErrorMessage("failed to login.");
     }
   };
 
   return (
-    <form className="provider-form" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="first_name"
-        placeholder="First Name"
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="text"
-        name="last_name"
-        placeholder="Last Name"
-        onChange={handleChange}
-        required
-      />
+    <form className="login-form" onSubmit={handleSubmit}>
       <input
         type="email"
         name="email"
@@ -67,14 +64,8 @@ export default function ProviderRegisterForm() {
         onChange={handleChange}
         required
       />
-      <input
-        type="text"
-        name="service_name"
-        placeholder="Service Name"
-        onChange={handleChange}
-        required
-      />
-      <button type="submit">Register</button>
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
+      <button type="submit">Login</button>
     </form>
   );
 }

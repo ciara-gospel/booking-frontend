@@ -5,9 +5,8 @@ import "./BookingPage.css";
 
 export default function BookingPage() {
   const [slots, setSlots] = useState([]);
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE = import.meta.env.VITE_BASE_URL;
 
-  // Charger les créneaux disponibles
   useEffect(() => {
     fetch(`${API_BASE}/available-slots`, {
       credentials: "include",
@@ -20,7 +19,6 @@ export default function BookingPage() {
       });
   }, []);
 
-  // Réserver un créneau
   const handleBook = async (slotId) => {
     if (!window.confirm("Confirm this booking?")) return;
 
@@ -34,7 +32,6 @@ export default function BookingPage() {
 
       if (!res.ok) throw new Error("Booking failed");
 
-      // Mise à jour du slot comme réservé
       const updatedSlots = slots.map((slot) =>
         slot.id === slotId ? { ...slot, is_booked: true } : slot
       );

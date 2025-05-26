@@ -4,38 +4,58 @@ import "./SlotForm.css";
 export default function SlotForm({ onSlotCreated }) {
   const [startTime, setStartTime] = useState("");
   const [duration, setDuration] = useState("");
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const API_BASE = import.meta.env.VITE_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(null);
 
-    if (!startTime || !duration) {
-      alert("Please fill all fields");
+    if (!startTime || !duration || parseInt(duration, 10) <= 0) {
+      setError("Please fill all fields with valid values.");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("User not authenticated. Please log in again.");
       return;
     }
 
     try {
-      const res = await fetch(`${API_BASE}/slots`, {
+      const isoStartTime = new Date(startTime).toISOString();
+
+      const res = await fetch(`${API_BASE}/api/slots`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
-          start_time: startTime,
-          duration_minutes: parseInt(duration),
+          start_time: isoStartTime,
+          duration_minutes: parseInt(duration, 10),
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to create slot");
-
       const data = await res.json();
-      onSlotCreated(data); // callback vers CreateSlotPage
+      console.log("API response:", data);
 
-      // Reset form
+      if (!res.ok) {
+        console.error("Error response status:", res.status);
+        console.error("Error response body:", data);
+        throw new Error(data.message || "Failed to create slot");
+      }
+
+      onSlotCreated(data.slot);
       setStartTime("");
       setDuration("");
+      setSuccess("Slot created successfully!");
     } catch (err) {
-      console.error(err);
-      alert("Error creating slot");
+      console.error("Slot creation error caught:", err);
+      setError("Error creating slot: " + err.message);
     }
   };
 
@@ -43,12 +63,16 @@ export default function SlotForm({ onSlotCreated }) {
     <form className="slot-form" onSubmit={handleSubmit}>
       <h2>Create Time Slot</h2>
 
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
+
       <label htmlFor="start_time">Start Time</label>
       <input
         type="datetime-local"
         id="start_time"
         value={startTime}
         onChange={(e) => setStartTime(e.target.value)}
+        required
       />
 
       <label htmlFor="duration">Duration (minutes)</label>
@@ -58,6 +82,7 @@ export default function SlotForm({ onSlotCreated }) {
         value={duration}
         onChange={(e) => setDuration(e.target.value)}
         min="1"
+        required
       />
 
       <button type="submit">Save</button>

@@ -8,14 +8,30 @@ export default function ProviderTable({ slots, onUpdate, onDelete }) {
   const handleEdit = (slot) => {
     setEditingSlotId(slot.id);
     setEditedSlot({
-      start_time: slot.start_time,
+      start_time: slot.start_time.slice(0, 16),
       duration_minutes: slot.duration_minutes,
     });
   };
 
   const handleSave = (slotId) => {
-    onUpdate(slotId, editedSlot);
+    if (!editedSlot.start_time || editedSlot.duration_minutes <= 0) {
+      alert("Please enter valid slot data.");
+      return;
+    }
+
+    const slotToSend = {
+      ...editedSlot,
+      duration_minutes: parseInt(editedSlot.duration_minutes, 10),
+      start_time: new Date(editedSlot.start_time).toISOString(),
+    };
+
+    onUpdate(slotId, slotToSend);
     setEditingSlotId(null);
+  };
+
+  const handleCancel = () => {
+    setEditingSlotId(null);
+    setEditedSlot({});
   };
 
   return (
@@ -24,7 +40,7 @@ export default function ProviderTable({ slots, onUpdate, onDelete }) {
         <tr>
           <th>Slot ID</th>
           <th>Start Time</th>
-          <th>Duration</th>
+          <th>Duration (min)</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -57,6 +73,7 @@ export default function ProviderTable({ slots, onUpdate, onDelete }) {
                 {editingSlotId === slot.id ? (
                   <input
                     type="number"
+                    min="1"
                     value={editedSlot.duration_minutes}
                     onChange={(e) =>
                       setEditedSlot({
@@ -71,7 +88,12 @@ export default function ProviderTable({ slots, onUpdate, onDelete }) {
               </td>
               <td>
                 {editingSlotId === slot.id ? (
-                  <button onClick={() => handleSave(slot.id)}>Save</button>
+                  <>
+                    <button onClick={() => handleSave(slot.id)}>Save</button>
+                    <button onClick={handleCancel} className="cancel-btn">
+                      Cancel
+                    </button>
+                  </>
                 ) : (
                   <button onClick={() => handleEdit(slot)}>Update</button>
                 )}

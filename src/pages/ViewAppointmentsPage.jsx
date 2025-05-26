@@ -4,7 +4,7 @@ import "./ViewAppointmentsPage.css";
 
 export default function ViewAppointmentsPage() {
   const [appointments, setAppointments] = useState([]);
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
     fetch(`${API_BASE}/provider/appointments`, { credentials: "include" })

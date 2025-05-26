@@ -1,26 +1,30 @@
 .provider-slot-table {
     width: 100%;
     border-collapse: collapse;
-  }
-  
-  .provider-slot-table th,
-  .provider-slot-table td {
-    border: 1px solid #ccc;
-    padding: 10px;
+}
+
+.provider-slot-table th,
+.provider-slot-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
     text-align: center;
-  }
-  
-  .provider-slot-table input {
-    padding: 6px;
-    width: 90%;
-  }
-  
-  .delete-btn {
-    background-color: red;
+}
+
+.provider-slot-table th {
+    background-color: #f2f2f2;
+}
+
+button {
+    margin: 0 4px;
+    padding: 4px 8px;
+}
+
+.cancel-btn {
+    background-color: #999;
     color: white;
-    border: none;
-    margin-left: 5px;
-    padding: 6px 10px;
-    cursor: pointer;
-  }
-  
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}

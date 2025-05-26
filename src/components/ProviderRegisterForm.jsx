@@ -11,6 +11,7 @@ export default function ProviderRegisterForm() {
     service_name: "",
   });
 
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -19,8 +20,8 @@ export default function ProviderRegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/register/provider`,
+      const registerRes = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/auth/register/provider`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -28,17 +29,22 @@ export default function ProviderRegisterForm() {
         }
       );
 
-      if (!res.ok) throw new Error("Failed to register");
+      let registerData = await registerRes.json();
+
+      if (!registerRes.ok) {
+        throw new Error(registerData.message || "Registration failed");
+      }
 
       navigate("/login");
     } catch (err) {
       console.error(err);
-      alert("Registration failed.");
+      setError(err.message);
     }
   };
 
   return (
     <form className="provider-form" onSubmit={handleSubmit}>
+      <h2>Provider Registration</h2>
       <input
         type="text"
         name="first_name"
@@ -75,6 +81,8 @@ export default function ProviderRegisterForm() {
         required
       />
       <button type="submit">Register</button>
+
+      {error && <p className="error-message">{error}</p>}
     </form>
   );
 }

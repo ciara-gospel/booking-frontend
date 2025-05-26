@@ -4,14 +4,13 @@
     align-items: center;
     padding: 15px 25px;
     background-color: #000;
-    color: #fff;
     border-bottom: 1px solid #ccc;
 }
 
 .logo {
     font-size: 22px;
     font-weight: bold;
-    color: #333;
+    color: #fff;
 }
 
 .header-buttons button {

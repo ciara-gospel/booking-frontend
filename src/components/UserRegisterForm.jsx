@@ -10,6 +10,7 @@ export default function UserRegisterForm() {
     password: "",
   });
 
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -17,9 +18,11 @@ export default function UserRegisterForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/register/user`,
+        `${import.meta.env.VITE_BASE_URL}/api/auth/register/user`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -27,17 +30,27 @@ export default function UserRegisterForm() {
         }
       );
 
-      if (!res.ok) throw new Error("Failed to register");
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        console.error("Erreur JSON :", jsonErr);
+      }
+
+      if (!res.ok) {
+        throw new Error(data.message || "Inscription échouée");
+      }
 
       navigate("/login");
     } catch (err) {
-      console.error(err);
-      alert("Registration failed.");
+      console.error("Erreur d’inscription :", err);
+      setError(err.message);
     }
   };
 
   return (
     <form className="register-form" onSubmit={handleSubmit}>
+      <h2>User Registration</h2>
       <input
         type="text"
         name="first_name"
@@ -67,6 +80,8 @@ export default function UserRegisterForm() {
         required
       />
       <button type="submit">Register</button>
+
+      {error && <p className="error-message">{error}</p>}
     </form>
   );
 }

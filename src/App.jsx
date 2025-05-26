@@ -18,7 +18,21 @@ import ViewAppointmentsPage from "./pages/ViewAppointmentsPage";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
-  const [userType, setUserType] = useState(null); // 'user' or 'provider'
+  const [userType, setUserType] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      return JSON.parse(storedUser).role || null;
+    }
+    return null;
+  });
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setAuthenticated(true);
+      setUserType(JSON.parse(storedUser).role);
+    }
+  }, []);
 
   return (
     <Router>
@@ -36,7 +50,7 @@ function App() {
 
         {/* User Routes */}
         <Route
-          path="/home"
+          path="/home/user"
           element={userType === "user" ? <UserHomePage /> : <Navigate to="/" />}
         />
         <Route
@@ -52,7 +66,7 @@ function App() {
 
         {/* Provider Routes */}
         <Route
-          path="/provider/home"
+          path="/home/provider"
           element={
             userType === "provider" ? <ProviderHomePage /> : <Navigate to="/" />
           }

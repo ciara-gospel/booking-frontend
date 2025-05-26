@@ -5,7 +5,7 @@ import ProviderRegisterForm from "../components/ProviderRegisterForm";
 import "./LandingPage.css";
 
 export default function LandingPage() {
-  const [selection, setSelection] = useState(null); // 'user' | 'provider'
+  const [selection, setSelection] = useState(null);
 
   return (
     <div className="landing-container">

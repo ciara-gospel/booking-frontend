@@ -5,10 +5,10 @@ import "./ProviderSlotListPage.css";
 
 export default function ProviderSlotListPage() {
   const [slots, setSlots] = useState([]);
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
-    fetch(`${API_BASE}/my-slots`, { credentials: "include" })
+    fetch(`${API_BASE}/slots/mine`, { credentials: "include" }) // <-- ✅ route correcte
       .then((res) => res.json())
       .then((data) => setSlots(data))
       .catch((err) => {
