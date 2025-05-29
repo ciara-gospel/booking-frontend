@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; // Import du contexte
 import "./LoginForm.css";
 
-export default function LoginForm({ setAuthenticated, setUserType }) {
+export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const { setAuthenticated, setUserType } = useAuth(); // Récupération depuis le contexte
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,9 +30,12 @@ export default function LoginForm({ setAuthenticated, setUserType }) {
       if (!res.ok) throw new Error("Login failed");
 
       const data = await res.json();
-      console.log("Logged in user:", data.user);
+      console.log("Logged in user:", data);
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      const token = localStorage.getItem("token");
+      console.log(token)
+      
 
       const role = data.user.role;
       setAuthenticated(true);
@@ -41,11 +46,11 @@ export default function LoginForm({ setAuthenticated, setUserType }) {
       } else if (role === "provider") {
         navigate("/home/provider");
       } else {
-        setErrorMessage("unknow user role.");
+        setErrorMessage("Unknown user role.");
       }
     } catch (err) {
       console.error(err);
-      setErrorMessage("failed to login.");
+      setErrorMessage("Failed to login.");
     }
   };
 

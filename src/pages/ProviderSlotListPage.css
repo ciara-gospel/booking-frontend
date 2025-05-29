@@ -46,3 +46,17 @@ button:not(.delete-btn) {
 button:not(.delete-btn):hover {
     background-color: #2980b9;
 }
+
+.publish-btn {
+    background-color: #4caf50;
+    color: white;
+    padding: 0.5rem 1rem;
+    margin-top: 3rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.publish-btn:hover {
+    background-color: #45a049;
+}

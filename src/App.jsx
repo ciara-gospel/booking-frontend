@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -15,51 +15,47 @@ import ProviderHomePage from "./pages/ProviderHomePage";
 import CreateSlotPage from "./pages/CreateSlotPage";
 import ProviderSlotListPage from "./pages/ProviderSlotListPage";
 import ViewAppointmentsPage from "./pages/ViewAppointmentsPage";
+import { useAuth } from "./context/AuthContext";
+
+const ProtectedRoute = ({ role, children }) => {
+  const { authenticated, userType, loading } = useAuth();
+
+  if (loading) return <div>Loading...</div>;
+  if (!authenticated || userType !== role) return <Navigate to="/" />;
+
+  return children;
+};
 
 function App() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [userType, setUserType] = useState(null);
-  const [loading, setLoading] = useState(true); // 👈
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const parsed = JSON.parse(storedUser);
-      setAuthenticated(true);
-      setUserType(parsed.role);
-    }
-    setLoading(false); // 👈 marque la fin de l'initialisation
-  }, []);
-
-  if (loading) return <div>Loading...</div>; // 👈 Affiche un écran temporaire
-
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/login"
-          element={
-            <LoginPage
-              setAuthenticated={setAuthenticated}
-              setUserType={setUserType}
-            />
-          }
-        />
+        <Route path="/login" element={<LoginPage />} />
 
         {/* User Routes */}
         <Route
           path="/home/user"
-          element={userType === "user" ? <UserHomePage /> : <Navigate to="/" />}
+          element={
+            <ProtectedRoute role="user">
+              <UserHomePage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/booking"
-          element={userType === "user" ? <BookingPage /> : <Navigate to="/" />}
+          element={
+            <ProtectedRoute role="user">
+              <BookingPage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/list"
           element={
-            userType === "user" ? <UserBookingListPage /> : <Navigate to="/" />
+            <ProtectedRoute role="user">
+              <UserBookingListPage />
+            </ProtectedRoute>
           }
         />
 
@@ -67,33 +63,33 @@ function App() {
         <Route
           path="/home/provider"
           element={
-            userType === "provider" ? <ProviderHomePage /> : <Navigate to="/" />
+            <ProtectedRoute role="provider">
+              <ProviderHomePage />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/createslot"
           element={
-            userType === "provider" ? <CreateSlotPage /> : <Navigate to="/" />
+            <ProtectedRoute role="provider">
+              <CreateSlotPage />
+            </ProtectedRoute>
           }
         />
         <Route
-          path="/provider/slots"
+          path="/provider/list"
           element={
-            userType === "provider" ? (
+            <ProtectedRoute role="provider">
               <ProviderSlotListPage />
-            ) : (
-              <Navigate to="/" />
-            )
+            </ProtectedRoute>
           }
         />
         <Route
           path="/provider/appointments"
           element={
-            userType === "provider" ? (
+            <ProtectedRoute role="provider">
               <ViewAppointmentsPage />
-            ) : (
-              <Navigate to="/" />
-            )
+            </ProtectedRoute>
           }
         />
       </Routes>

@@ -9,7 +9,7 @@ export default function ProviderHeader() {
       <nav className="provider-nav">
         <Link to="/home/provider">Home</Link>
         <Link to="/createslot">Create Slot</Link>
-        <Link to="/list">List</Link>
+        <Link to="/provider/list">List</Link>
         <Link to="/appointments">View Appointments</Link>
       </nav>
     </header>
