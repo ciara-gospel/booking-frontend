@@ -1,0 +1,62 @@
+.slot-list-page {
+    padding: 40px;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+.slot-list-page h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+button {
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+button:not(.delete-btn) {
+    background-color: #3498db;
+    color: #fff;
+}
+
+button:not(.delete-btn):hover {
+    background-color: #2980b9;
+}
+
+.publish-btn {
+    background-color: #4caf50;
+    color: white;
+    padding: 0.5rem 1rem;
+    margin-top: 3rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.publish-btn:hover {
+    background-color: #45a049;
+}

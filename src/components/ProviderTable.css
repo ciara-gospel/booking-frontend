@@ -1,0 +1,30 @@
+.provider-slot-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.provider-slot-table th,
+.provider-slot-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.provider-slot-table th {
+    background-color: #f2f2f2;
+}
+
+button {
+    margin: 0 4px;
+    padding: 4px 8px;
+}
+
+.cancel-btn {
+    background-color: #999;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
